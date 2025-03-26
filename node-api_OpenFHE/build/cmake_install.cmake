@@ -1,4 +1,4 @@
-# Install script for directory: /home/gabriel/coding/homomorphic_encryption_comparison/node-api_OpenFHE
+# Install script for directory: /home/gabriel/coding/HE_comparison_implementation/node-api_OpenFHE
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -50,5 +50,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/gabriel/coding/homomorphic_encryption_comparison/node-api_OpenFHE/build/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/gabriel/coding/HE_comparison_implementation/node-api_OpenFHE/build/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

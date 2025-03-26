@@ -8,7 +8,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "/home/gabriel/coding/homomorphic_encryption_comparison/node-api_OpenFHE/greater_than_pke.cc" "CMakeFiles/greater_than.dir/greater_than_pke.cc.o" "gcc" "CMakeFiles/greater_than.dir/greater_than_pke.cc.o.d"
+  "/home/gabriel/coding/HE_comparison_implementation/node-api_OpenFHE/greater_than_pke.cc" "CMakeFiles/greater_than.dir/greater_than_pke.cc.o" "gcc" "CMakeFiles/greater_than.dir/greater_than_pke.cc.o.d"
   )
 
 # Targets to which this target links which contain Fortran sources.

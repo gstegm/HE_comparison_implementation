@@ -1,3 +1,3 @@
-/home/gabriel/coding/homomorphic_encryption_comparison/node-api_OpenFHE/build/CMakeFiles/greater_than.dir
-/home/gabriel/coding/homomorphic_encryption_comparison/node-api_OpenFHE/build/CMakeFiles/edit_cache.dir
-/home/gabriel/coding/homomorphic_encryption_comparison/node-api_OpenFHE/build/CMakeFiles/rebuild_cache.dir
+/home/gabriel/coding/HE_comparison_implementation/node-api_OpenFHE/build/CMakeFiles/greater_than.dir
+/home/gabriel/coding/HE_comparison_implementation/node-api_OpenFHE/build/CMakeFiles/edit_cache.dir
+/home/gabriel/coding/HE_comparison_implementation/node-api_OpenFHE/build/CMakeFiles/rebuild_cache.dir

@@ -1,11 +1,11 @@
 CMakeFiles/greater_than.dir/greater_than_pke.cc.o: \
- /home/gabriel/coding/homomorphic_encryption_comparison/node-api_OpenFHE/greater_than_pke.cc \
+ /home/gabriel/coding/HE_comparison_implementation/node-api_OpenFHE/greater_than_pke.cc \
  /usr/include/stdc-predef.h \
- /home/gabriel/coding/homomorphic_encryption_comparison/node-api_OpenFHE/node_modules/node-api-headers/include/node_api.h \
- /home/gabriel/coding/homomorphic_encryption_comparison/node-api_OpenFHE/node_modules/node-api-headers/include/js_native_api.h \
+ /home/gabriel/coding/HE_comparison_implementation/node-api_OpenFHE/node_modules/node-api-headers/include/node_api.h \
+ /home/gabriel/coding/HE_comparison_implementation/node-api_OpenFHE/node_modules/node-api-headers/include/js_native_api.h \
  /usr/lib/gcc/x86_64-linux-gnu/13/include/stdbool.h \
  /usr/lib/gcc/x86_64-linux-gnu/13/include/stddef.h \
- /home/gabriel/coding/homomorphic_encryption_comparison/node-api_OpenFHE/node_modules/node-api-headers/include/js_native_api_types.h \
+ /home/gabriel/coding/HE_comparison_implementation/node-api_OpenFHE/node_modules/node-api-headers/include/js_native_api_types.h \
  /usr/lib/gcc/x86_64-linux-gnu/13/include/stdint.h /usr/include/stdint.h \
  /usr/include/x86_64-linux-gnu/bits/libc-header-start.h \
  /usr/include/features.h /usr/include/features-time64.h \
@@ -22,7 +22,7 @@ CMakeFiles/greater_than.dir/greater_than_pke.cc.o: \
  /usr/include/x86_64-linux-gnu/bits/stdint-intn.h \
  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
  /usr/include/x86_64-linux-gnu/bits/stdint-least.h \
- /home/gabriel/coding/homomorphic_encryption_comparison/node-api_OpenFHE/node_modules/node-api-headers/include/node_api_types.h \
+ /home/gabriel/coding/HE_comparison_implementation/node-api_OpenFHE/node_modules/node-api-headers/include/node_api_types.h \
  /usr/local/include/openfhe/binfhe/binfhecontext.h \
  /usr/local/include/openfhe/binfhe/binfhe-base-scheme.h \
  /usr/local/include/openfhe/binfhe/binfhe-base-params.h \

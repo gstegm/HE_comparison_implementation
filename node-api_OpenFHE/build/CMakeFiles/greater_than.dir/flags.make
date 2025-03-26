@@ -4,7 +4,7 @@
 # compile CXX with /usr/bin/c++
 CXX_DEFINES = -DNAPI_VERSION=7 -Dgreater_than_EXPORTS
 
-CXX_INCLUDES = -I/usr/local/include/openfhe -I/usr/local/include/openfhe/third-party/include -I/usr/local/include/openfhe/core -I/usr/local/include/openfhe/pke -I/usr/local/include/openfhe/binfhe -I/home/gabriel/coding/homomorphic_encryption_comparison/node-api_OpenFHE/node_modules/node-api-headers/include
+CXX_INCLUDES = -I/usr/local/include/openfhe -I/usr/local/include/openfhe/third-party/include -I/usr/local/include/openfhe/core -I/usr/local/include/openfhe/pke -I/usr/local/include/openfhe/binfhe -I/home/gabriel/coding/HE_comparison_implementation/node-api_OpenFHE/node_modules/node-api-headers/include
 
 CXX_FLAGS =  -Wall -Werror -O3  -DOPENFHE_VERSION=1.2.3 -Wno-parentheses -DMATHBACKEND=4 -fopenmp -O3 -DNDEBUG -std=gnu++17 -fPIC
 
