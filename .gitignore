@@ -2,4 +2,4 @@ build
 node_modules
 target
 demoData
-.node
+*.node
