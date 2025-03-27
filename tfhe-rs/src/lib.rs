@@ -3,7 +3,7 @@ use napi::bindgen_prelude::*;
 use napi_derive::napi;
 
 /// module registration is done by the runtime, no need to explicitly do it now.
-/// run napi build to build the program
+/// run $napi build
 #[napi]
 fn fibonacci(n: u32) -> u32 {
   match n {
