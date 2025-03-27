@@ -7,4 +7,4 @@
  * module registration is done by the runtime, no need to explicitly do it now.
  * run $napi build
  */
-export declare function fibonacci(n: number): number
+export declare function fibonacci(clearA: number, clearB: number): boolean
