@@ -55,48 +55,31 @@ int compare(int first, int second) {
 
 // CODE FOR SERIALIZATION
 
-    const std::string DATAFOLDER = "demoData";
-
     // Serializing key-independent crypto context
-
-    if (!Serial::SerializeToFile(DATAFOLDER + "/cryptoContext.txt", cc1, SerType::JSON)) {
-        std::cerr << "Error serializing the cryptocontext" << std::endl;
-        return 1;
-    }
+    std::string ccString = Serial::SerializeToString(cc1);
     std::cout << "The cryptocontext has been serialized." << std::endl;
 
     // Serializing refreshing and key switching keys (needed for bootstrapping)
 
-    if (!Serial::SerializeToFile(DATAFOLDER + "/refreshKey.txt", cc1.GetRefreshKey(), SerType::JSON)) {
-        std::cerr << "Error serializing the refreshing key" << std::endl;
-        return 1;
-    }
+    std::string refreshKeyString = Serial::SerializeToString(cc1.GetRefreshKey());
     std::cout << "The refreshing key has been serialized." << std::endl;
 
-    if (!Serial::SerializeToFile(DATAFOLDER + "/ksKey.txt", cc1.GetSwitchKey(), SerType::JSON)) {
-        std::cerr << "Error serializing the switching key" << std::endl;
-        return 1;
-    }
+    std::string ksKeyString = Serial::SerializeToString(cc1.GetSwitchKey());
     std::cout << "The key switching key has been serialized." << std::endl;
 
     // Serializing private keys
 
-    if (!Serial::SerializeToFile(DATAFOLDER + "/sk1.txt", sk1, SerType::JSON)) {
-        std::cerr << "Error serializing sk1" << std::endl;
-        return 1;
-    }
+    std::string skString = Serial::SerializeToString(sk1);
     std::cout << "The secret key sk1 key been serialized." << std::endl;
 
     // Serializing public keys
 
-    if (!Serial::SerializeToFile(DATAFOLDER + "/pk1.txt", pk1, SerType::JSON)) {
-        std::cerr << "Error serializing pk1" << std::endl;
-        return 1;
-    }
+    std::string pkString = Serial::SerializeToString(pk1);
     std::cout << "The public key pk1 key been serialized." << std::endl;
 
     // Serializing a ciphertext
-
+    std::string ctString = Serial::SerializeToString(ctvec1[0]);
+    std::cout << "length of serialized ciphertext: " << ctString.length() << std::endl;
     // if (!Serial::SerializeToFile(DATAFOLDER + "/ct1.txt", ct1, SerType::JSON)) {
     //     std::cerr << "Error serializing ct1" << std::endl;
     //     return 1;
@@ -108,26 +91,17 @@ int compare(int first, int second) {
     // Deserializing the cryptocontext
 
     BinFHEContext cc;
-    if (Serial::DeserializeFromFile(DATAFOLDER + "/cryptoContext.txt", cc, SerType::JSON) == false) {
-        std::cerr << "Could not deserialize the cryptocontext" << std::endl;
-        return 1;
-    }
+    Serial::DeserializeFromString(cc, ccString);
     std::cout << "The cryptocontext has been deserialized." << std::endl;
 
     // deserializing the refreshing and switching keys (for bootstrapping)
 
     RingGSWACCKey refreshKey;
-    if (Serial::DeserializeFromFile(DATAFOLDER + "/refreshKey.txt", refreshKey, SerType::JSON) == false) {
-        std::cerr << "Could not deserialize the refresh key" << std::endl;
-        return 1;
-    }
+    Serial::DeserializeFromString(refreshKey, refreshKeyString);
     std::cout << "The refresh key has been deserialized." << std::endl;
 
     LWESwitchingKey ksKey;
-    if (Serial::DeserializeFromFile(DATAFOLDER + "/ksKey.txt", ksKey, SerType::JSON) == false) {
-        std::cerr << "Could not deserialize the switching key" << std::endl;
-        return 1;
-    }
+    Serial::DeserializeFromString(ksKey, ksKeyString);
     std::cout << "The switching key has been deserialized." << std::endl;
 
     // Loading the keys in the cryptocontext
@@ -136,17 +110,11 @@ int compare(int first, int second) {
     // Deserializing the secret key
 
     LWEPrivateKey sk;
-    if (Serial::DeserializeFromFile(DATAFOLDER + "/sk1.txt", sk, SerType::JSON) == false) {
-        std::cerr << "Could not deserialize the secret key" << std::endl;
-        return 1;
-    }
+    Serial::DeserializeFromString(sk, skString);
     std::cout << "The secret key has been deserialized." << std::endl;
 
     LWEPublicKey pk;
-    if (Serial::DeserializeFromFile(DATAFOLDER + "/pk1.txt", pk, SerType::JSON) == false) {
-        std::cerr << "Could not deserialize the public key" << std::endl;
-        return 1;
-    }
+    Serial::DeserializeFromString(pk, pkString);
     std::cout << "The public key has been deserialized." << std::endl;
 
     // Deserializing a previously serialized ciphertext
