@@ -18,14 +18,14 @@ fn gt(clear_a: u32, clear_b: u32) -> bool {
 
     //Server-side
     set_server_key(server_key);
-    let ltresult = a.lt(b);
-    //let gtresult = a.gt(b);
+    //let ltresult = a.lt(b);
+    let gtresult = a.gt(b);
 
     //Client-side
-    let decrypted_ltresult: bool = ltresult.decrypt(&client_key);
-    //let decrypted_gtresult: bool = gtresult.decrypt(&client_key);
+    //let decrypted_ltresult: bool = ltresult.decrypt(&client_key);
+    let decrypted_gtresult: bool = gtresult.decrypt(&client_key);
 
     //println!("{}", decrypted_ltresult);
     //println!("{}", decrypted_gtresult);
-    return decrypted_ltresult;
+    return decrypted_gtresult;
 }
