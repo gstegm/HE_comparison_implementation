@@ -7,7 +7,7 @@ use tfhe::prelude::*;
 /// module registration is done by the runtime, no need to explicitly do it now.
 /// run $napi build
 #[napi]
-fn fibonacci(clear_a: u32, clear_b: u32) -> bool {
+fn gt(clear_a: u32, clear_b: u32) -> bool {
     let config = ConfigBuilder::default().build();
 
     // Client-side
@@ -25,8 +25,7 @@ fn fibonacci(clear_a: u32, clear_b: u32) -> bool {
     let decrypted_ltresult: bool = ltresult.decrypt(&client_key);
     //let decrypted_gtresult: bool = gtresult.decrypt(&client_key);
 
-    println!("{}", decrypted_ltresult);
+    //println!("{}", decrypted_ltresult);
     //println!("{}", decrypted_gtresult);
     return decrypted_ltresult;
-
 }
