@@ -8,3 +8,6 @@
  * run $napi build
  */
 export declare function gt(clearA: number, clearB: number): boolean
+export declare function getclientkey(): Buffer
+export declare function getserverkey(clientKeyBuf: Buffer): Buffer
+export declare function enc(clearA: number, clientKeyBuf: Buffer): number
