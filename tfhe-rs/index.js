@@ -1,5 +1,10 @@
 const addon = require("./tfhe_comparison.node");
-console.log(addon.gt(6, 7));
-const clientkey = addon.getclientkey();
+const vec = addon.getclientkey();
+const clientkey = vec[0];
+const serverkey = vec[1];
 console.log(clientkey);
-console.log(addon.enc(5, clientkey));
+const enc_a = addon.enc(6, clientkey);
+const enc_b = addon.enc(5, clientkey);
+const enc_comp = addon.compare(enc_a, enc_b, serverkey);
+const dec_comp = addon.dec(enc_comp, clientkey);
+console.log(dec_comp);

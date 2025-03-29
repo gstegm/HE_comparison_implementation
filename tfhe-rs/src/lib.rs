@@ -2,7 +2,7 @@
 use napi::bindgen_prelude::*;
 use napi_derive::napi;
 use tfhe::integer::backward_compatibility::server_key;
-use tfhe::{generate_keys, set_server_key, ClientKey, ConfigBuilder, FheUint32, ServerKey};
+use tfhe::{generate_keys, set_server_key, ClientKey, ConfigBuilder, FheUint32, FheBool, ServerKey};
 use tfhe::prelude::*;
 use tfhe::safe_serialization::{safe_serialize, safe_deserialize};
 use tfhe::conformance::ParameterSetConformant;
@@ -36,16 +36,19 @@ fn gt(clear_a: u32, clear_b: u32) -> bool {
 }
 
 #[napi]
-fn getclientkey() -> Buffer {
+fn getclientkey() -> Vec<Buffer> {
     let config = ConfigBuilder::default().build();
 
     // Client-side
-    let (client_key, _) = generate_keys(config);
+    let (client_key, server_key) = generate_keys(config);
 
     let mut buffer1 = vec![];
     safe_serialize(&client_key, &mut buffer1, 1 << 30).unwrap();
 
-    return buffer1.into();
+    let mut buffer2 = vec![];
+    safe_serialize(&server_key, &mut buffer2, 1 << 30).unwrap();
+
+    return vec![buffer1.into(), buffer2.into()];
 }
 
 
@@ -65,12 +68,53 @@ fn getserverkey(client_key_buf:Buffer) -> Buffer {
 }
 
 #[napi]
-fn enc(clear_a: u32, client_key_buf:Buffer) -> u32 {
+fn enc(clear_a: u32, client_key_buf:Buffer) -> Buffer {
     let client_key_buf: Vec<u8> = client_key_buf.into();
     let config = ConfigBuilder::default().build();
     let client_key_deser: ClientKey =
         safe_deserialize(client_key_buf.as_slice(), 1 << 30).unwrap();
    
-    let a = FheUint32::encrypt(clear_a, &client_key_deser);
-    return a.decrypt(&client_key_deser);
+    let enc_a = FheUint32::encrypt(clear_a, &client_key_deser);
+
+    let mut ctbuf = vec![];
+    safe_serialize(&enc_a, &mut ctbuf, 1 << 20).unwrap();
+
+    return ctbuf.into();
+}
+
+#[napi]
+fn compare(enc_a: Buffer, enc_b: Buffer, server_key_buf:Buffer) -> Buffer {
+    let server_key_buf: Vec<u8> = server_key_buf.into();
+    let enc_a: Vec<u8> = enc_a.into();
+    let enc_b: Vec<u8> = enc_b.into();
+    // let config = ConfigBuilder::default().build();
+    let server_key_deser: ServerKey =
+        safe_deserialize(server_key_buf.as_slice(), 1 << 30).unwrap();
+    let enc_a_deser: FheUint32 =
+        safe_deserialize(enc_a.as_slice(), 1 << 20).unwrap();
+    let enc_b_deser: FheUint32 =
+        safe_deserialize(enc_b.as_slice(), 1 << 20).unwrap();
+    
+
+    set_server_key(server_key_deser);
+    let gtresult = enc_a_deser.gt(enc_b_deser);
+
+    let mut ctbuf = vec![];
+    safe_serialize(&gtresult, &mut ctbuf, 1 << 20).unwrap();
+
+    return ctbuf.into();
+}
+
+#[napi]
+fn dec(enc_a: Buffer, client_key_buf:Buffer) -> bool {
+    let client_key_buf: Vec<u8> = client_key_buf.into();
+    let enc_a: Vec<u8> = enc_a.into();
+    let client_key_deser: ClientKey =
+        safe_deserialize(client_key_buf.as_slice(), 1 << 30).unwrap();
+    let enc_a_deser: FheBool =
+        safe_deserialize(enc_a.as_slice(), 1 << 20).unwrap();
+       
+    let decrypted_bool: bool = enc_a_deser.decrypt(&client_key_deser);
+
+    return decrypted_bool;
 }
