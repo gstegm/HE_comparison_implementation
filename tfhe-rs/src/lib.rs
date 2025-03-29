@@ -1,8 +1,14 @@
+/// inspirational sources:
+/// https://docs.zama.ai/tfhe-rs/fhe-computation/advanced-features/public_key
+/// https://docs.zama.ai/tfhe-rs/fhe-computation/data-handling/serialization
+/// https://napi.rs/docs/concepts/values
+/// https://www.youtube.com/watch?v=LLxfmrrl4cE
+
 /// import the preludes
 use napi::bindgen_prelude::*;
 use napi_derive::napi;
 use tfhe::integer::backward_compatibility::server_key;
-use tfhe::{generate_keys, set_server_key, ClientKey, ConfigBuilder, FheUint32, FheBool, ServerKey};
+use tfhe::{generate_keys, set_server_key, ClientKey, ConfigBuilder, FheInt64, FheBool, ServerKey};
 use tfhe::prelude::*;
 use tfhe::safe_serialization::{safe_serialize, safe_deserialize};
 use tfhe::conformance::ParameterSetConformant;
@@ -11,14 +17,14 @@ use tfhe::PublicKey;
 /// module registration is done by the runtime, no need to explicitly do it now.
 /// run $napi build
 #[napi]
-fn gt(clear_a: u32, clear_b: u32) -> bool {
+fn gt(clear_a: i64, clear_b: i64) -> bool {
     let config = ConfigBuilder::default().build();
 
     // Client-side
     let (client_key, server_key) = generate_keys(config);
 
-    let a = FheUint32::encrypt(clear_a, &client_key);
-    let b = FheUint32::encrypt(clear_b, &client_key);
+    let a = FheInt64::encrypt(clear_a, &client_key);
+    let b = FheInt64::encrypt(clear_b, &client_key);
 
 
     //Server-side
@@ -67,13 +73,13 @@ fn getpublickey(client_key_buf:Buffer) -> Buffer {
 }
 
 #[napi]
-fn enc(clear_a: u32, client_key_buf:Buffer) -> Buffer {
+fn enc(clear_a: i64, client_key_buf:Buffer) -> Buffer {
     let client_key_buf: Vec<u8> = client_key_buf.into();
     let config = ConfigBuilder::default().build();
     let client_key_deser: ClientKey =
         safe_deserialize(client_key_buf.as_slice(), 1 << 30).unwrap();
    
-    let enc_a = FheUint32::encrypt(clear_a, &client_key_deser);
+    let enc_a = FheInt64::encrypt(clear_a, &client_key_deser);
 
     let mut ctbuf = vec![];
     safe_serialize(&enc_a, &mut ctbuf, 1 << 20).unwrap();
@@ -82,13 +88,13 @@ fn enc(clear_a: u32, client_key_buf:Buffer) -> Buffer {
 }
 
 #[napi]
-fn encpub(clear_a: u32, public_key_buf:Buffer) -> Buffer {
+fn encpub(clear_a: i64, public_key_buf:Buffer) -> Buffer {
     let public_key_buf: Vec<u8> = public_key_buf.into();
     let config = ConfigBuilder::default().build();
     let public_key_deser: PublicKey =
         safe_deserialize(public_key_buf.as_slice(), 1 << 40).unwrap();
    
-    let enc_a = FheUint32::encrypt(clear_a, &public_key_deser);
+    let enc_a = FheInt64::encrypt(clear_a, &public_key_deser);
 
     let mut ctbuf = vec![];
     safe_serialize(&enc_a, &mut ctbuf, 1 << 20).unwrap();
@@ -104,9 +110,9 @@ fn compare(enc_a: Buffer, enc_b: Buffer, server_key_buf:Buffer) -> Buffer {
     // let config = ConfigBuilder::default().build();
     let server_key_deser: ServerKey =
         safe_deserialize(server_key_buf.as_slice(), 1 << 30).unwrap();
-    let enc_a_deser: FheUint32 =
+    let enc_a_deser: FheInt64 =
         safe_deserialize(enc_a.as_slice(), 1 << 20).unwrap();
-    let enc_b_deser: FheUint32 =
+    let enc_b_deser: FheInt64 =
         safe_deserialize(enc_b.as_slice(), 1 << 20).unwrap();
     
 
