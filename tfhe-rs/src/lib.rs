@@ -36,7 +36,7 @@ fn gt(clear_a: u32, clear_b: u32) -> bool {
 }
 
 #[napi]
-fn getclientkey() -> Vec<Buffer> {
+fn getkeys() -> Vec<Buffer> {
     let config = ConfigBuilder::default().build();
 
     // Client-side
@@ -51,9 +51,8 @@ fn getclientkey() -> Vec<Buffer> {
     return vec![buffer1.into(), buffer2.into()];
 }
 
-
 #[napi]
-fn getserverkey(client_key_buf:Buffer) -> Buffer {
+fn getpublickey(client_key_buf:Buffer) -> Buffer {
     let client_key_buf: Vec<u8> = client_key_buf.into();
     let config = ConfigBuilder::default().build();
     let client_key_deser: ClientKey =
@@ -75,6 +74,21 @@ fn enc(clear_a: u32, client_key_buf:Buffer) -> Buffer {
         safe_deserialize(client_key_buf.as_slice(), 1 << 30).unwrap();
    
     let enc_a = FheUint32::encrypt(clear_a, &client_key_deser);
+
+    let mut ctbuf = vec![];
+    safe_serialize(&enc_a, &mut ctbuf, 1 << 20).unwrap();
+
+    return ctbuf.into();
+}
+
+#[napi]
+fn encpub(clear_a: u32, public_key_buf:Buffer) -> Buffer {
+    let public_key_buf: Vec<u8> = public_key_buf.into();
+    let config = ConfigBuilder::default().build();
+    let public_key_deser: PublicKey =
+        safe_deserialize(public_key_buf.as_slice(), 1 << 40).unwrap();
+   
+    let enc_a = FheUint32::encrypt(clear_a, &public_key_deser);
 
     let mut ctbuf = vec![];
     safe_serialize(&enc_a, &mut ctbuf, 1 << 20).unwrap();
