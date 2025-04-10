@@ -8,7 +8,7 @@
  * run $napi build
  */
 export declare function getkeys(): Array<Buffer>
-export declare function enc(clearA: number, clientKeyBuf: Buffer): Buffer
-export declare function encpub(clearA: number, publicKeyBuf: Buffer): Buffer
-export declare function gt(encA: Buffer, encB: Buffer, serverKeyBuf: Buffer): Buffer
-export declare function dec(encA: Buffer, clientKeyBuf: Buffer): boolean
+export declare function enc(plain: number, clientKeySer: Buffer): Buffer
+export declare function encpub(plain: number, publicKeySer: Buffer): Buffer
+export declare function gt(cipherASer: Buffer, cipherBSer: Buffer, serverKeySer: Buffer): Buffer
+export declare function dec(cipherSer: Buffer, clientKeySer: Buffer): boolean

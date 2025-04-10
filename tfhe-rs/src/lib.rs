@@ -21,79 +21,68 @@ fn getkeys() -> Vec<Buffer> {
     let (client_key, server_key) = generate_keys(config);
     let public_key = PublicKey::new(&client_key);
 
-    let mut buffer1 = vec![];
-    safe_serialize(&client_key, &mut buffer1, 1 << 30).unwrap();
+    let mut client_key_ser = vec![];
+    safe_serialize(&client_key, &mut client_key_ser, 1 << 30).unwrap();
 
-    let mut buffer2 = vec![];
-    safe_serialize(&server_key, &mut buffer2, 1 << 30).unwrap();
+    let mut server_key_ser = vec![];
+    safe_serialize(&server_key, &mut server_key_ser, 1 << 30).unwrap();
 
-    let mut buffer3 = vec![];
-    safe_serialize(&public_key, &mut buffer3, 1 << 40).unwrap();
+    let mut public_key_ser = vec![];
+    safe_serialize(&public_key, &mut public_key_ser, 1 << 40).unwrap();
 
-    return vec![buffer1.into(), buffer2.into(), buffer3.into()];
+    return vec![client_key_ser.into(), server_key_ser.into(), public_key_ser.into()];
 }
 
 #[napi]
-fn enc(clear_a: i64, client_key_buf:Buffer) -> Buffer {
-    let client_key_buf: Vec<u8> = client_key_buf.into();
-    let client_key_deser: ClientKey =
-        safe_deserialize(client_key_buf.as_slice(), 1 << 30).unwrap();
+fn enc(plain: i64, client_key_ser:Buffer) -> Buffer {
+    let client_key_ser: Vec<u8> = client_key_ser.into();
+    let client_key: ClientKey = safe_deserialize(client_key_ser.as_slice(), 1 << 30).unwrap();
    
-    let enc_a = FheInt64::encrypt(clear_a, &client_key_deser);
+    let cipher = FheInt64::encrypt(plain, &client_key);
+    let mut cipher_ser = vec![];
+    safe_serialize(&cipher, &mut cipher_ser, 1 << 20).unwrap();
 
-    let mut ctbuf = vec![];
-    safe_serialize(&enc_a, &mut ctbuf, 1 << 20).unwrap();
-
-    return ctbuf.into();
+    return cipher_ser.into();
 }
 
 #[napi]
-fn encpub(clear_a: i64, public_key_buf:Buffer) -> Buffer {
-    let public_key_buf: Vec<u8> = public_key_buf.into();
-    let public_key_deser: PublicKey =
-        safe_deserialize(public_key_buf.as_slice(), 1 << 40).unwrap();
+fn encpub(plain: i64, public_key_ser:Buffer) -> Buffer {
+    let public_key_ser: Vec<u8> = public_key_ser.into();
+    let public_key: PublicKey = safe_deserialize(public_key_ser.as_slice(), 1 << 40).unwrap();
    
-    let enc_a = FheInt64::encrypt(clear_a, &public_key_deser);
+    let cipher = FheInt64::encrypt(plain, &public_key);
+    let mut cipher_ser = vec![];
+    safe_serialize(&cipher, &mut cipher_ser, 1 << 20).unwrap();
 
-    let mut ctbuf = vec![];
-    safe_serialize(&enc_a, &mut ctbuf, 1 << 20).unwrap();
-
-    return ctbuf.into();
+    return cipher_ser.into();
 }
 
 #[napi]
-fn gt(enc_a: Buffer, enc_b: Buffer, server_key_buf:Buffer) -> Buffer {
-    let server_key_buf: Vec<u8> = server_key_buf.into();
-    let enc_a: Vec<u8> = enc_a.into();
-    let enc_b: Vec<u8> = enc_b.into();
-    // let config = ConfigBuilder::default().build();
-    let server_key_deser: ServerKey =
-        safe_deserialize(server_key_buf.as_slice(), 1 << 30).unwrap();
-    let enc_a_deser: FheInt64 =
-        safe_deserialize(enc_a.as_slice(), 1 << 20).unwrap();
-    let enc_b_deser: FheInt64 =
-        safe_deserialize(enc_b.as_slice(), 1 << 20).unwrap();
-    
+fn gt(cipher_a_ser: Buffer, cipher_b_ser: Buffer, server_key_ser:Buffer) -> Buffer {
+    let server_key_ser: Vec<u8> = server_key_ser.into();
+    let cipher_a_ser: Vec<u8> = cipher_a_ser.into();
+    let cipher_b_ser: Vec<u8> = cipher_b_ser.into();
+    let server_key: ServerKey = safe_deserialize(server_key_ser.as_slice(), 1 << 30).unwrap();
+    let cipher_a: FheInt64 = safe_deserialize(cipher_a_ser.as_slice(), 1 << 20).unwrap();
+    let cipher_b: FheInt64 = safe_deserialize(cipher_b_ser.as_slice(), 1 << 20).unwrap();
 
-    set_server_key(server_key_deser);
-    let gtresult = enc_a_deser.gt(enc_b_deser);
+    set_server_key(server_key);
+    let gtresult = cipher_a.gt(cipher_b);
 
-    let mut ctbuf = vec![];
-    safe_serialize(&gtresult, &mut ctbuf, 1 << 20).unwrap();
+    let mut gtresult_ser = vec![];
+    safe_serialize(&gtresult, &mut gtresult_ser, 1 << 20).unwrap();
 
-    return ctbuf.into();
+    return gtresult_ser.into();
 }
 
 #[napi]
-fn dec(enc_a: Buffer, client_key_buf:Buffer) -> bool {
-    let client_key_buf: Vec<u8> = client_key_buf.into();
-    let enc_a: Vec<u8> = enc_a.into();
-    let client_key_deser: ClientKey =
-        safe_deserialize(client_key_buf.as_slice(), 1 << 30).unwrap();
-    let enc_a_deser: FheBool =
-        safe_deserialize(enc_a.as_slice(), 1 << 20).unwrap();
+fn dec(cipher_ser: Buffer, client_key_ser:Buffer) -> bool {
+    let client_key_ser: Vec<u8> = client_key_ser.into();
+    let cipher_ser: Vec<u8> = cipher_ser.into();
+
+    let client_key: ClientKey = safe_deserialize(client_key_ser.as_slice(), 1 << 30).unwrap();
+    let cipher: FheBool = safe_deserialize(cipher_ser.as_slice(), 1 << 20).unwrap();
        
-    let decrypted_bool: bool = enc_a_deser.decrypt(&client_key_deser);
-
-    return decrypted_bool;
+    let plain: bool = cipher.decrypt(&client_key);
+    return plain;
 }
