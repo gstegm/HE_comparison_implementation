@@ -7,10 +7,9 @@
  * module registration is done by the runtime, no need to explicitly do it now.
  * run $napi build
  */
-export declare function gt(clearA: number, clearB: number): boolean
 export declare function getkeys(): Array<Buffer>
 export declare function getpublickey(clientKeyBuf: Buffer): Buffer
 export declare function enc(clearA: number, clientKeyBuf: Buffer): Buffer
 export declare function encpub(clearA: number, publicKeyBuf: Buffer): Buffer
-export declare function compare(encA: Buffer, encB: Buffer, serverKeyBuf: Buffer): Buffer
+export declare function gt(encA: Buffer, encB: Buffer, serverKeyBuf: Buffer): Buffer
 export declare function dec(encA: Buffer, clientKeyBuf: Buffer): boolean
