@@ -8,7 +8,6 @@
  * run $napi build
  */
 export declare function getkeys(): Array<Buffer>
-export declare function getpublickey(clientKeyBuf: Buffer): Buffer
 export declare function enc(clearA: number, clientKeyBuf: Buffer): Buffer
 export declare function encpub(clearA: number, publicKeyBuf: Buffer): Buffer
 export declare function gt(encA: Buffer, encB: Buffer, serverKeyBuf: Buffer): Buffer

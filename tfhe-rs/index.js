@@ -4,7 +4,7 @@ const clientkey = vec[0];
 const serverkey = vec[1];
 const publickey = vec[2];
 const enc_a = addon.enc(1743242617, clientkey);
-const enc_b = addon.encpub(-2200565386, pubkey);
+const enc_b = addon.encpub(-2200565386, publickey);
 const enc_comp = addon.gt(enc_a, enc_b, serverkey);
 const dec_comp = addon.dec(enc_comp, clientkey);
 console.log(dec_comp);
