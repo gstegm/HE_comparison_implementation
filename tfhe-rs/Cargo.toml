@@ -10,6 +10,7 @@ crate-type = ["cdylib"]
 napi = "2"
 napi-derive = "2"
 tfhe = { version = "~1.0.0", features = ["integer"] }
+bincode = "1.3.3"
 
 [build-dependencies]
 napi-build = "1"

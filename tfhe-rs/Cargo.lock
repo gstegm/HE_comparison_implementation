@@ -621,6 +621,7 @@ dependencies = [
 name = "tfhe_comparison"
 version = "0.1.0"
 dependencies = [
+ "bincode",
  "napi",
  "napi-build",
  "napi-derive",
