@@ -23,10 +23,8 @@ fn getkeys() -> Vec<Buffer> {
 
     let mut client_key_ser = vec![];
     safe_serialize(&client_key, &mut client_key_ser, 1 << 30).unwrap();
-
     let mut server_key_ser = vec![];
     safe_serialize(&server_key, &mut server_key_ser, 1 << 30).unwrap();
-
     let mut public_key_ser = vec![];
     safe_serialize(&public_key, &mut public_key_ser, 1 << 40).unwrap();
 
