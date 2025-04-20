@@ -35,7 +35,7 @@ int compare(int first, int second) {
     // Encrypt several ciphertexts representing Boolean True (1) or False (0).
     // plaintext modulus is set higher than 4 to 2 * num_of_inputs
 
-    const int INTSIZE = 64;
+    const int INTSIZE = 16;
 
     std::cout << "Encrypting first integer." << std::endl;
 

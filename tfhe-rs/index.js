@@ -1,10 +1,16 @@
 const addon = require("./tfhe_comparison.node");
-const vec = addon.getkeys();
-const clientkey = vec[0];
-const serverkey = vec[1];
-const publickey = vec[2];
-const enc_a = addon.enc(1743242617, clientkey);
-const enc_b = addon.encpub(-2200565386, publickey);
-const enc_comp = addon.gt(enc_a, enc_b, serverkey);
-const dec_comp = addon.dec(enc_comp, clientkey);
-console.log(dec_comp);
+//const clientkey = vec[0];
+//const serverkey = vec[1];
+//const publickey = vec[2];
+
+for (let i = 0; i < 2; i++) { 
+    const vec = addon.getKeys();
+    const enc_a = addon.encrypt(1743242617, vec[0]);
+    const enc_b = addon.encryptPublicKey(-2200565386, vec[2]);
+    const enc_comp = addon.greaterThan(enc_a, enc_b, vec[1]);
+    const dec_comp = addon.decrypt(enc_comp, vec[0]);
+    console.log(dec_comp);
+}
+//for(i=0;i<100;i++) {
+//    addon.allInOne();
+//}
