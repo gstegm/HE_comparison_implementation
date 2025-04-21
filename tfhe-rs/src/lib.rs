@@ -11,7 +11,6 @@ use tfhe::{generate_keys, set_server_key, ClientKey, ConfigBuilder, FheInt64, Fh
 use tfhe::prelude::*;
 use tfhe::safe_serialization::{safe_serialize, safe_deserialize};
 use tfhe::PublicKey;
-use std::mem;
 use std::time::Instant;
 
 /// module registration is done by the runtime, no need to explicitly do it now.
