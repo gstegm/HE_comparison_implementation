@@ -16,7 +16,7 @@ use std::mem;
 /// module registration is done by the runtime, no need to explicitly do it now.
 /// run $napi build
 #[napi]
-fn getkeys() -> Vec<Buffer> {
+fn get_keys() -> Vec<Buffer> {
     let config = ConfigBuilder::default().build();
 
     let (client_key, server_key) = generate_keys(config);
@@ -29,15 +29,11 @@ fn getkeys() -> Vec<Buffer> {
     let mut public_key_ser = vec![];
     safe_serialize(&public_key, &mut public_key_ser, 1 << 35).unwrap();
 
-    drop(client_key);
-    drop(server_key);
-    drop(public_key);
-
     return vec![client_key_ser.into(), server_key_ser.into(), public_key_ser.into()];
 }
 
 #[napi]
-fn enc(plain: i64, client_key_ser:Buffer) -> Buffer {
+fn encrypt(plain: i64, client_key_ser:Buffer) -> Buffer {
     let client_key_ser: Vec<u8> = client_key_ser.into();
     let client_key: ClientKey = safe_deserialize(client_key_ser.as_slice(), 1 << 30).unwrap();
    
@@ -49,7 +45,7 @@ fn enc(plain: i64, client_key_ser:Buffer) -> Buffer {
 }
 
 #[napi]
-fn encpub(plain: i64, public_key_ser:Buffer) -> Buffer {
+fn encrypt_public_key(plain: i64, public_key_ser:Buffer) -> Buffer {
     let public_key_ser: Vec<u8> = public_key_ser.into();
     let public_key: PublicKey = safe_deserialize(public_key_ser.as_slice(), 1 << 40).unwrap();
    
@@ -60,7 +56,7 @@ fn encpub(plain: i64, public_key_ser:Buffer) -> Buffer {
 }
 
 #[napi]
-fn gt(cipher_a_ser: Buffer, cipher_b_ser: Buffer, server_key_ser:Buffer) -> Buffer {
+fn greater_than(cipher_a_ser: Buffer, cipher_b_ser: Buffer, server_key_ser:Buffer) -> Buffer {
     let server_key_ser: Vec<u8> = server_key_ser.into();
     let cipher_a_ser: Vec<u8> = cipher_a_ser.into();
     let cipher_b_ser: Vec<u8> = cipher_b_ser.into();
@@ -80,7 +76,7 @@ fn gt(cipher_a_ser: Buffer, cipher_b_ser: Buffer, server_key_ser:Buffer) -> Buff
 }
 
 #[napi]
-fn dec(cipher_ser: Buffer, client_key_ser:Buffer) -> bool {
+fn decrypt(cipher_ser: Buffer, client_key_ser:Buffer) -> bool {
     let client_key_ser: Vec<u8> = client_key_ser.into();
     let cipher_ser: Vec<u8> = cipher_ser.into();
 
@@ -91,6 +87,7 @@ fn dec(cipher_ser: Buffer, client_key_ser:Buffer) -> bool {
     return plain;
 }
 
+/* 
 #[napi]
 fn all_in_one() {
         let config = ConfigBuilder::default().build();
@@ -121,14 +118,26 @@ fn all_in_one() {
 fn get_keys() -> Vec<Buffer> {
     let config = ConfigBuilder::default().build();
 
-    let (client_key, server_key) = generate_keys(config);
-    let public_key = PublicKey::new(&client_key);
+    // Scope the large key structs so they get dropped early
+    let (client_key_ser, server_key_ser, public_key_ser) = {
+        let (client_key, server_key) = generate_keys(config);
+        let public_key = PublicKey::new(&client_key);
 
-    let client_key_ser = bincode::serialize(&client_key).unwrap();
-    let server_key_ser = bincode::serialize(&server_key).unwrap();
-    let public_key_ser = bincode::serialize(&public_key).unwrap();
+        // Serialize them while still in scope
+        let client_key_ser = bincode::serialize(&client_key).unwrap();
+        let server_key_ser = bincode::serialize(&server_key).unwrap();
+        let public_key_ser = bincode::serialize(&public_key).unwrap();
 
-    return vec![client_key_ser.into(), server_key_ser.into(), public_key_ser.into()];
+        // After this block, client_key, server_key, and public_key are dropped
+        (client_key_ser, server_key_ser, public_key_ser)
+    };
+
+    // Now only serialized buffers are in scope (smaller memory footprint)
+    vec![
+        client_key_ser.into(),
+        server_key_ser.into(),
+        public_key_ser.into(),
+    ]
 }
 
 #[napi]
@@ -182,3 +191,5 @@ fn decrypt(cipher_ser: Buffer, client_key_ser:Buffer) -> bool {
     let plain: bool = cipher.decrypt(&client_key);
     return plain;
 }
+
+*/
