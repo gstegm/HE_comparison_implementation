@@ -36,11 +36,8 @@ fn get_keys() -> Vec<Buffer> {
 
 #[napi]
 fn encrypt(plain: i64, client_key_ser:Buffer) -> Buffer {
-    println!("starting deserialization");
     let client_key_ser: Vec<u8> = client_key_ser.into();
     let client_key: ClientKey = safe_deserialize(client_key_ser.as_slice(), 1 << 30).unwrap();
-    println!("ending deserialization");
-   
     let cipher = FheInt64::encrypt(plain, &client_key);
     let mut cipher_ser = vec![];
     safe_serialize(&cipher, &mut cipher_ser, 1 << 20).unwrap();
@@ -76,7 +73,7 @@ fn greater_than(cipher_a_ser: Buffer, cipher_b_ser: Buffer, server_key_ser:Buffe
     let now = Instant::now();
     let gtresult = cipher_a.gt(cipher_b.clone());
     let elapsed = now.elapsed();
-    println!("Elapsed: {:.2?}", elapsed);
+    //println!("Elapsed: {:.2?}", elapsed);
     let mut gtresult_ser = vec![];
     safe_serialize(&gtresult, &mut gtresult_ser, 1 << 20).unwrap();
 
