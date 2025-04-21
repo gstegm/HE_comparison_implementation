@@ -19,7 +19,6 @@ use std::time::Instant;
 #[napi]
 fn get_keys() -> Vec<Buffer> {
     let config = ConfigBuilder::default().build();
-    git config pull.rebase fals
     let (client_key, server_key) = generate_keys(config);
     //let client_key= ClientKey::generate(config);
     //let server_key = CompressedServerKey::new(&client_key);
@@ -36,7 +35,7 @@ fn get_keys() -> Vec<Buffer> {
 }
 
 #[napi]
-fn enc(plain: i64, client_key_ser:Buffer) -> Buffer {
+fn encrypt(plain: i64, client_key_ser:Buffer) -> Buffer {
     println!("starting deserialization");
     let client_key_ser: Vec<u8> = client_key_ser.into();
     let client_key: ClientKey = safe_deserialize(client_key_ser.as_slice(), 1 << 30).unwrap();
@@ -70,10 +69,6 @@ fn greater_than(cipher_a_ser: Buffer, cipher_b_ser: Buffer, server_key_ser:Buffe
     let cipher_a: FheInt64 = safe_deserialize(cipher_a_ser.as_slice(), 1 << 20).unwrap();
     let cipher_b: FheInt64 = safe_deserialize(cipher_b_ser.as_slice(), 1 << 20).unwrap();
 
-    set_server_key(server_key.clone());
-    println!("start");
-    let gtresult = cipher_a.gt(cipher_b.clone());
-    println!("end");
     //let gpu_key = server_key.decompress_to_gpu();
     //set_server_key(gpu_key);
     set_server_key(server_key);
