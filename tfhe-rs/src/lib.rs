@@ -16,7 +16,7 @@ use std::time::Instant;
 /// module registration is done by the runtime, no need to explicitly do it now.
 /// run $napi build
 #[napi]
-fn get_keys() -> Vec<Buffer> {
+fn get_keys() -> Vec<Vec<u8>> {
     let config = ConfigBuilder::default().build();
     //let (client_key, server_key) = generate_keys(config);
     let client_key= ClientKey::generate(config);
@@ -38,7 +38,7 @@ fn get_keys() -> Vec<Buffer> {
 }
 
 #[napi]
-fn encrypt(plain: i64, client_key_ser:Buffer) -> Buffer {
+fn encrypt(plain: i64, client_key_ser:Vec<u8>) -> Vec<u8> {
     let client_key_ser: Vec<u8> = client_key_ser.into();
     let client_key: ClientKey = safe_deserialize(client_key_ser.as_slice(), 1 << 30).unwrap();
     let cipher = FheInt64::encrypt(plain, &client_key);
@@ -49,7 +49,7 @@ fn encrypt(plain: i64, client_key_ser:Buffer) -> Buffer {
 }
 
 #[napi]
-fn encrypt_public_key(plain: i64, compressed_public_key_ser:Buffer) -> Buffer {
+fn encrypt_public_key(plain: i64, compressed_public_key_ser:Vec<u8>) -> Vec<u8> {
     let compressed_public_key_ser: Vec<u8> = compressed_public_key_ser.into();
     let compressed_public_key: CompressedPublicKey = safe_deserialize(compressed_public_key_ser.as_slice(), 1 << 35).unwrap();
     let public_key = compressed_public_key.decompress();
@@ -61,7 +61,7 @@ fn encrypt_public_key(plain: i64, compressed_public_key_ser:Buffer) -> Buffer {
 }
 
 #[napi]
-fn greater_than(cipher_a_ser: Buffer, cipher_b_ser: Buffer, compressed_server_key_ser:Buffer) -> Buffer {
+fn greater_than(cipher_a_ser: Vec<u8>, cipher_b_ser: Vec<u8>, compressed_server_key_ser:Vec<u8>) -> Vec<u8> {
     let compressed_server_key_ser: Vec<u8> = compressed_server_key_ser.into();
     let cipher_a_ser: Vec<u8> = cipher_a_ser.into();
     let cipher_b_ser: Vec<u8> = cipher_b_ser.into();
@@ -86,7 +86,7 @@ fn greater_than(cipher_a_ser: Buffer, cipher_b_ser: Buffer, compressed_server_ke
 }
 
 #[napi]
-fn decrypt(cipher_ser: Buffer, client_key_ser:Buffer) -> bool {
+fn decrypt(cipher_ser: Vec<u8>, client_key_ser:Vec<u8>) -> bool {
     let client_key_ser: Vec<u8> = client_key_ser.into();
     let cipher_ser: Vec<u8> = cipher_ser.into();
 
