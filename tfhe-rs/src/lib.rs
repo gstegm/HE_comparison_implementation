@@ -28,7 +28,11 @@ fn get_keys() -> Vec<Buffer> {
     let mut compressed_server_key_ser = vec![];
     safe_serialize(&compressed_server_key, &mut compressed_server_key_ser, 1 << 30).unwrap();
     let mut compressed_public_key_ser = vec![];
-    safe_serialize(&compressed_public_key, &mut compressed_public_key_ser, 1 << 35).unwrap();
+    safe_serialize(&compressed_public_key, &mut compressed_public_key_ser, 1 << 30).unwrap();
+
+    //println!("{}", client_key_ser.len());
+    //println!("{}", compressed_server_key_ser.len());
+    //println!("{}", compressed_public_key_ser.len());
 
     return vec![client_key_ser.into(), compressed_server_key_ser.into(), compressed_public_key_ser.into()];
 }

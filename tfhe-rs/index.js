@@ -3,7 +3,7 @@ const addon = require("./tfhe_comparison.node");
 //const serverkey = vec[1];
 //const publickey = vec[2];
 
-for (let i = 0; i < 10; i++) { 
+for (let i = 0; i < 100; i++) { 
     const vec = addon.getKeys();
     const enc_a = addon.encrypt(1743242617, vec[0]);
     const enc_b = addon.encryptPublicKey(-2200565386, vec[2]);
