@@ -7,7 +7,7 @@
 /// import the preludes
 use napi::bindgen_prelude::*;
 use napi_derive::napi;
-use tfhe::{generate_keys, set_server_key, ClientKey, ConfigBuilder, FheInt64, FheBool, ServerKey, CompressedServerKey};
+use tfhe::{generate_keys, set_server_key, ClientKey, ConfigBuilder, FheInt64, FheBool, ServerKey, CompressedPublicKey, CompressedServerKey};
 use tfhe::prelude::*;
 use tfhe::safe_serialization::{safe_serialize, safe_deserialize};
 use tfhe::PublicKey;
@@ -18,19 +18,19 @@ use std::time::Instant;
 #[napi]
 fn get_keys() -> Vec<Buffer> {
     let config = ConfigBuilder::default().build();
-    let (client_key, server_key) = generate_keys(config);
-    //let client_key= ClientKey::generate(config);
-    //let server_key = CompressedServerKey::new(&client_key);
-    let public_key = PublicKey::new(&client_key);
+    //let (client_key, server_key) = generate_keys(config);
+    let client_key= ClientKey::generate(config);
+    let compressed_server_key = CompressedServerKey::new(&client_key);
+    let compressed_public_key = CompressedPublicKey::new(&client_key);
 
     let mut client_key_ser = vec![];
     safe_serialize(&client_key, &mut client_key_ser, 1 << 30).unwrap();
-    let mut server_key_ser = vec![];
-    safe_serialize(&server_key, &mut server_key_ser, 1 << 30).unwrap();
-    let mut public_key_ser = vec![];
-    safe_serialize(&public_key, &mut public_key_ser, 1 << 35).unwrap();
+    let mut compressed_server_key_ser = vec![];
+    safe_serialize(&compressed_server_key, &mut compressed_server_key_ser, 1 << 30).unwrap();
+    let mut compressed_public_key_ser = vec![];
+    safe_serialize(&compressed_public_key, &mut compressed_public_key_ser, 1 << 35).unwrap();
 
-    return vec![client_key_ser.into(), server_key_ser.into(), public_key_ser.into()];
+    return vec![client_key_ser.into(), compressed_server_key_ser.into(), compressed_public_key_ser.into()];
 }
 
 #[napi]
@@ -45,9 +45,10 @@ fn encrypt(plain: i64, client_key_ser:Buffer) -> Buffer {
 }
 
 #[napi]
-fn encrypt_public_key(plain: i64, public_key_ser:Buffer) -> Buffer {
-    let public_key_ser: Vec<u8> = public_key_ser.into();
-    let public_key: PublicKey = safe_deserialize(public_key_ser.as_slice(), 1 << 40).unwrap();
+fn encrypt_public_key(plain: i64, compressed_public_key_ser:Buffer) -> Buffer {
+    let compressed_public_key_ser: Vec<u8> = compressed_public_key_ser.into();
+    let compressed_public_key: CompressedPublicKey = safe_deserialize(compressed_public_key_ser.as_slice(), 1 << 35).unwrap();
+    let public_key = compressed_public_key.decompress();
    
     let cipher = FheInt64::encrypt(plain, &public_key);
     let mut cipher_ser = vec![];
@@ -56,16 +57,17 @@ fn encrypt_public_key(plain: i64, public_key_ser:Buffer) -> Buffer {
 }
 
 #[napi]
-fn greater_than(cipher_a_ser: Buffer, cipher_b_ser: Buffer, server_key_ser:Buffer) -> Buffer {
-    let server_key_ser: Vec<u8> = server_key_ser.into();
+fn greater_than(cipher_a_ser: Buffer, cipher_b_ser: Buffer, compressed_server_key_ser:Buffer) -> Buffer {
+    let compressed_server_key_ser: Vec<u8> = compressed_server_key_ser.into();
     let cipher_a_ser: Vec<u8> = cipher_a_ser.into();
     let cipher_b_ser: Vec<u8> = cipher_b_ser.into();
     //let server_key: CompressedServerKey = safe_deserialize(server_key_ser.as_slice(), 1 << 30).unwrap();
-    let server_key: ServerKey = safe_deserialize(server_key_ser.as_slice(), 1 << 30).unwrap();
+    let compressed_server_key: CompressedServerKey = safe_deserialize(compressed_server_key_ser.as_slice(), 1 << 30).unwrap();
     let cipher_a: FheInt64 = safe_deserialize(cipher_a_ser.as_slice(), 1 << 20).unwrap();
     let cipher_b: FheInt64 = safe_deserialize(cipher_b_ser.as_slice(), 1 << 20).unwrap();
 
     //let gpu_key = server_key.decompress_to_gpu();
+    let server_key = compressed_server_key.decompress();
     //set_server_key(gpu_key);
     set_server_key(server_key);
 
