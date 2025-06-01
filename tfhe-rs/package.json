@@ -12,5 +12,6 @@
   "scripts": {
     "build": "napi build --release",
     "build:debug": "napi build"
-  }
+  },
+  "dependencies": {"pidusage": "^3.0.2"}
 }

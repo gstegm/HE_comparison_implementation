@@ -10,7 +10,7 @@ using namespace lbcrypto;
 // https://www.geeksforgeeks.org/cpp-bitset-and-its-application/
 // https://www.youtube.com/watch?v=CJqERG2rBaU
 
-int compare(int first, int second) {
+int greaterThan(int plainX, int plainY) {
     // Sample Program: Step 1: Set CryptoContext
 
     auto cc1 = BinFHEContext();
@@ -39,18 +39,18 @@ int compare(int first, int second) {
 
     std::cout << "Encrypting first integer." << std::endl;
 
-    std::bitset<INTSIZE> bitseq1(first);
-    std::vector<LWECiphertext> ctvec1;
+    std::bitset<INTSIZE> plainXBits(plainX);
+    std::vector<LWECiphertext> cipherXBits;
     for (int i=0; i<INTSIZE; i++) {
-        ctvec1.push_back(cc1.Encrypt(cc1.GetPublicKey(), bitseq1[i]));
+        cipherXBits.push_back(cc1.Encrypt(cc1.GetPublicKey(), plainXBits[i]));
     }
 
     std::cout << "Encrypting second integer." << std::endl;
    
-    std::bitset<INTSIZE> bitseq2(second);
-    std::vector<LWECiphertext> ctvec2;
+    std::bitset<INTSIZE> plainYBits(plainY);
+    std::vector<LWECiphertext> cipherYBits;
     for (int i=0; i<INTSIZE; i++) {
-        ctvec2.push_back(cc1.Encrypt(cc1.GetPublicKey(), bitseq2[i]));
+        cipherYBits.push_back(cc1.Encrypt(cc1.GetPublicKey(), plainYBits[i]));
     }
 
 // CODE FOR SERIALIZATION
@@ -78,7 +78,7 @@ int compare(int first, int second) {
     std::cout << "The public key pk1 key been serialized." << std::endl;
 
     // Serializing a ciphertext
-    std::string ctString = Serial::SerializeToString(ctvec1[0]);
+    std::string ctString = Serial::SerializeToString(cipherXBits[0]);
     std::cout << "length of serialized ciphertext: " << ctString.length() << std::endl;
     // if (!Serial::SerializeToFile(DATAFOLDER + "/ct1.txt", ct1, SerType::JSON)) {
     //     std::cerr << "Error serializing ct1" << std::endl;
@@ -138,9 +138,8 @@ int compare(int first, int second) {
         for (int i=0; i<=INTSIZE-1; i++) {
             std::cout << "i = " << i << ", j = " << j << std::endl;
             if (j==1) {
-                z[i][j-1] = cc.EvalBinGate(XNOR, ctvec1[i], ctvec2[i]);
-                t[i][j-1] = cc.EvalBinGate(AND, ctvec1[i], cc.EvalNOT(ctvec2[i]));
-                
+                z[i][j-1] = cc.EvalBinGate(XNOR, cipherXBits[i], cipherYBits[i]);
+                t[i][j-1] = cc.EvalBinGate(AND, cipherXBits[i], cc.EvalNOT(cipherYBits[i]));
             } else if (i+j-1 <=INTSIZE-1) {
                 z[i][j-1] = cc.EvalBinGate(AND, z[i+l][j-l-1], z[i][l-1]);
                 temp = cc.EvalBinGate(AND, z[i+l][j-l-1], t[i][l-1]);
@@ -162,27 +161,27 @@ int compare(int first, int second) {
 napi_value GreaterThan(napi_env env, napi_callback_info info) {
     size_t argc = 2;
     napi_value args[2];
-    int64_t first;
-    int64_t second;
-    int64_t greater_than_result;
+    int64_t plainX;
+    int64_t plainY;
+    int64_t greaterThanResult;
     napi_value output;
 
     napi_get_cb_info(env, info, &argc, args, NULL, NULL);
 
-    napi_get_value_int64(env, args[0], &first);
-    napi_get_value_int64(env, args[1], &second);
+    napi_get_value_int64(env, args[0], &plainX);
+    napi_get_value_int64(env, args[1], &plainY);
 
-    greater_than_result = compare(first, second);
+    greaterThanResult = greaterThan(plainX, plainY);
 
-    napi_create_int64(env, greater_than_result, &output);
+    napi_create_int64(env, greaterThanResult, &output);
 
     return output;
 }
 
 napi_value init(napi_env env, napi_value exports) {
-    napi_value greater_than;
-    napi_create_function(env, nullptr, 0, GreaterThan, nullptr, &greater_than);
-    return greater_than;
+    napi_value greaterThan;
+    napi_create_function(env, nullptr, 0, GreaterThan, nullptr, &greaterThan);
+    return greaterThan;
 }
 
 NAPI_MODULE(NODE_GYP_MODULE_NAME, init);
