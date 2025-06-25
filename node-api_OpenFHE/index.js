@@ -1,6 +1,7 @@
 const greaterThan = require("./build/Release/greater_than")
 const { performance, PerformanceObserver } = require('perf_hooks');
 const pidusage = require('pidusage');
+const usage = require('cpu-percentage');
 const fs = require('fs');
 const { Parser } = require('json2csv');
 
@@ -8,11 +9,13 @@ const degreeThresholdTimestamp = 1262304000;  // Unix timestamp: Fri Jan 01 2010
 const degreeIssuanceTimestamp = 1500000000;   // Unix timestamp: Fri Jul 14 2017 02:40:00
 
 async function measureFunctionExecution(func, label, ...args) {
+    const start = usage();
     performance.mark(`${label}-start`);
     const result = await func(...args);
     performance.mark(`${label}-end`);
     performance.measure(label, `${label}-start`, `${label}-end`);
-    const { cpu, memory } = await pidusage(process.pid);
+    const { memory } = await pidusage(process.pid);
+    const cpu = usage(start).percent;
     const duration = performance.getEntriesByName(label)[0].duration;
     performance.clearMarks();
     performance.clearMeasures();

@@ -11,10 +11,13 @@
   "license": "ISC",
   "dependencies": {
     "cmake-js": "^7.3.0",
+    "cpu-percentage": "^1.0.3",
     "json2csv": "^6.0.0-alpha.2",
-    "pidusage": "^3.0.2"
+    "pidusage": "^4.0.1"
   },
   "binary": {
-    "napi_versions": [7]
+    "napi_versions": [
+      7
+    ]
   }
 }
