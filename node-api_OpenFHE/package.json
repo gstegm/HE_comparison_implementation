@@ -10,7 +10,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "cmake-js": "^7.3.0"
+    "cmake-js": "^7.3.0",
+    "json2csv": "^6.0.0-alpha.2",
+    "pidusage": "^3.0.2"
   },
   "binary": {
     "napi_versions": [7]
