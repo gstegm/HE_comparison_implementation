@@ -7,6 +7,10 @@ Make sure that all dependencies are installed or install them by running the fol
 ```shell
 npm install
 ```
+To build the TFHE-rs addon, the following commadn has to be executed:
+```shell
+npm run build
+```
 
 Then, a small testing environment can be executed with the following command after changing the working directory to the folder `TFHE-rs_NAPI-RS`:
 ```shell
