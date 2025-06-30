@@ -31,3 +31,9 @@ A small performance measurement environment can be executed with the following c
 ```shell
 node index.js
 ```
+
+ # References 
+- [TFHE-rs](https://github.com/zama-ai/tfhe-rs) library for homomorphic encryption in Rust, based on the TFHE encryption scheme. Read the documentation [here](https://docs.zama.ai/tfhe-rs).
+- [NAPI-RS](https://github.com/napi-rs/napi-rs) library for building compiled Node.js addons in Rust. Read the documentation [here](https://napi.rs/docs/introduction/getting-started).
+- [OpenFHE](https://github.com/openfheorg/openfhe-development) library for homomorphic encryption in C++. Read the documentation [here](https://openfhe-development.readthedocs.io/en/latest/)
+- Node-API library for building native addons for Node.js. Read the documentation [here](https://nodejs.org/api/n-api.html).
